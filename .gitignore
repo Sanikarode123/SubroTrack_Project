@@ -1,0 +1,43 @@
+@'
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+venv/
+.venv/
+env/
+
+# Django
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# AI and RAG data
+rag_store/
+chroma_db/
+.ollama/
+
+# Spark generated data
+analytics_data/
+spark-warehouse/
+metastore_db/
+
+# Node and frontend
+node_modules/
+dist/
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+'@ | Set-Content .gitignore
+backend/venv/

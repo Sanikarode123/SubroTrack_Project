@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* role themes: manager = violet, employee = green, client = navy */
+:root, [data-theme="manager"] { --c50: 243 240 255; --c100: 230 224 255; --c200: 207 195 255; --c600: 108 77 245; --c700: 90 61 224; --c900: 51 37 143; }
+[data-theme="employee"] { --c50: 236 253 243; --c100: 209 250 224; --c200: 167 243 196; --c600: 18 161 90; --c700: 14 131 72; --c900: 10 77 43; }
+[data-theme="client"] { --c50: 238 243 251; --c100: 219 230 246; --c200: 182 203 234; --c600: 31 58 122; --c700: 23 46 99; --c900: 15 31 69; }
+body { @apply bg-paper text-ink antialiased; }
+@layer components {
+  .card { @apply bg-white border border-slate-200/80 rounded-2xl; }
+  .btn { @apply inline-flex items-center justify-center gap-1.5 rounded-lg bg-teal-600 px-3.5 py-2 text-sm font-medium text-white hover:bg-teal-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 disabled:opacity-50; }
+  .btn-ghost { @apply inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium hover:bg-slate-50 disabled:opacity-50; }
+  .input { @apply w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-teal-600 focus:outline-none focus:ring-1 focus:ring-teal-600; }
+  .label { @apply mb-1 block text-xs font-medium text-slate-500; }
+  .chip { @apply inline-block rounded-md px-2 py-0.5 text-xs font-medium; }
+}

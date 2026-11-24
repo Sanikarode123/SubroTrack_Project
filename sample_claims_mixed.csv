@@ -1,0 +1,7 @@
+claim_id,policyholder,claim_status,incident_details,third_party,amount_paid,subrogation_potential
+CLM-3001,Ravi Kumar,Settled,Rear-end collision at signal,Bharat General Insurance,150000,Yes
+CLM-3002,Asha Menon,Settled,Own damage - tree fall,,42000,No
+CLM-3003,Imran Khan,Settled,Hit by delivery truck while parked,Delta Logistics,98000,Yes
+CLM-3004,Geeta Rao,Settled,Windshield crack,,8000,No
+CLM-3005,Nikhil Jain,Settled,Side collision at junction,Metro Assurance Co.,230000,Yes
+CLM-3006,Sunita Bhat,Settled,Theft of vehicle,,310000,No
