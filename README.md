@@ -3,7 +3,7 @@
 SubroTrack – AI-driven Insurance Subrogation Management System
 
 
-SubroTrack is an AI-powered web application designed to manage and track insurance subrogation recovery cases after a claim has been identified for recovery. It integrates document intelligence, AI-powered assistance, and data analytics to simplify recovery case management and support informed decision-making.
+SubroTrack is an AI-Driven web application designed to manage and track insurance subrogation recovery cases after a claim has been identified for recovery. It integrates document intelligence, AI-powered assistance, and data analytics to simplify recovery case management and support informed decision-making.
 
 
 Case Management: Track and manage insurance subrogation recovery cases.
