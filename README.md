@@ -1,7 +1,84 @@
 # SubroTrack
 
-A web system for tracking insurance subrogation recovery cases after a claim has been identified for recovery.
-Stack: React + Tailwind CSS, Django + Django REST Framework, SQL database (SQLite locally, PostgreSQL/RDS on AWS), Qwen3 1.7B through Ollama.
+SubroTrack – AI-driven Insurance Subrogation Management System
+
+
+SubroTrack is an AI-powered web application designed to manage and track insurance subrogation recovery cases after a claim has been identified for recovery. It integrates document intelligence, AI-powered assistance, and data analytics to simplify recovery case management and support informed decision-making.
+
+
+Case Management: Track and manage insurance subrogation recovery cases.
+
+AI Assistant: Get AI-powered assistance using a locally hosted Large Language Model.
+
+Document Intelligence: Process and retrieve relevant information from insurance documents using RAG.
+
+RAG-Based Question Answering: Generate context-aware responses using information retrieved from relevant documents.
+
+Analytics Dashboard: Analyze recovery-related data using Apache Spark.
+
+Database Management: Store and manage case, claim, and recovery information.
+
+🛠️ Technology Stack
+
+Category
+
+Technologies
+
+Frontend
+
+React.js, Tailwind CSS
+
+Backend
+
+Python, Django, Django REST Framework
+
+Database
+
+SQLite, PostgreSQL
+
+AI Runtime
+
+Ollama
+
+Language Model
+
+Qwen3 1.7B
+
+AI Architecture
+
+Retrieval-Augmented Generation (RAG)
+
+Big Data Processing
+
+Apache Spark, PySpark
+
+Communication
+
+REST APIs
+
+🤖 AI & Data Processing
+
+1. Ollama & Qwen3 1.7B
+
+Ollama runs the Qwen3 1.7B language model locally.
+
+The model provides AI-powered assistance and generates contextual responses through the Django backend.
+
+2. Retrieval-Augmented Generation (RAG)
+
+Extracts and indexes information from insurance-related documents.
+
+Retrieves relevant document content based on user queries.
+
+Passes the retrieved context to Qwen3 1.7B through Ollama to generate document-grounded responses.
+
+3. Apache Spark & PySpark
+
+Processes and analyzes insurance recovery-related datasets.
+
+Executes analytics workflows to generate meaningful recovery insights.
+
+Makes analytical results available through Django APIs for dashboard visualization.
 
 ## Roles
 | Role | Theme | Can do |
@@ -34,6 +111,8 @@ Backend (first time, or after upgrading: delete backend/db.sqlite3 and backend/c
     python -m venv venv
     venv\Scripts\activate            # Mac/Linux: source venv/bin/activate
     pip install -r requirements.txt
+    pip install -r requirements-spark.txt
+    pip install -r requirements-rag.txt
     python manage.py makemigrations cases
     python manage.py migrate
     python manage.py seed
@@ -63,9 +142,7 @@ Open http://localhost:5173 and pick the tab for your role.
 DELAY_THRESHOLD_DAYS (14), OLLAMA_URL, OLLAMA_MODEL (qwen3:1.7b), SECRET_KEY, DEBUG, ALLOWED_HOSTS,
 DB_NAME / DB_USER / DB_PASSWORD / DB_HOST for PostgreSQL (also `pip install psycopg2-binary`).
 
-## Deploying on AWS
-One EC2 instance (8 GB RAM) running gunicorn + nginx, Ollama on the same machine, optional RDS PostgreSQL and S3 for uploaded files.
-Build the frontend with `npm run build` and serve `frontend/dist` from nginx, proxying `/api/` and `/media/` to gunicorn.
+
 
 ## Data Analytics (Apache Spark)
 Managers get a **Data Analytics** page. Opening the page starts the PySpark job in the background when needed; the page polls its status and then
