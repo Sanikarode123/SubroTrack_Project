@@ -1,136 +1,482 @@
-# SubroTrack
+# SubroTrack – AI-Driven Insurance Subrogation Management System
 
-SubroTrack – AI-driven Insurance Subrogation Management System
+## Overview
 
+SubroTrack is a web-based application developed to manage and track insurance subrogation recovery cases after a claim has been identified for recovery. It provides a centralized platform for case management, employee coordination, document handling, third-party insurer tracking and recovery analytics.
 
-SubroTrack is an AI-Driven web application designed to manage and track insurance subrogation recovery cases after a claim has been identified for recovery. It integrates document intelligence, AI-powered assistance, and data analytics to simplify recovery case management and support informed decision-making.
+The system also integrates a locally hosted AI model and a Retrieval-Augmented Generation (RAG) pipeline to assist users in retrieving information from insurance documents and case records. Apache Spark is used to process recovery-related data and generate analytical insights.
 
+## Features
 
-Case Management: Track and manage insurance subrogation recovery cases.
+- **Case Management:** Register, import, assign and manage insurance recovery cases.
+- **Role-Based Access:** Separate dashboards and permissions for Managers, Employees and Clients.
+- **AI Assistant:** Get AI-powered assistance using Qwen3 1.7B through Ollama.
+- **Document Intelligence:** Extract text, generate summaries and identify key information from uploaded documents.
+- **RAG-Based Evidence Search:** Retrieve relevant information from case documents and records to answer user queries.
+- **Follow-up Management:** Track follow-ups, identify delayed cases and generate AI-assisted reports.
+- **Third-Party Tracking:** Maintain insurer responses, claimed amounts and recovered amounts.
+- **Recovery Analytics:** Analyze recovery trends, employee performance, case status and insurer-wise performance using Apache Spark.
+- **Client Portal:** Allow clients to track recovery progress, view missing documents, upload files and ask questions about their cases.
 
-AI Assistant: Get AI-powered assistance using a locally hosted Large Language Model.
+## User Roles
 
-Document Intelligence: Process and retrieve relevant information from insurance documents using RAG.
+| Role | Permissions and Responsibilities |
+|---|---|
+| Manager | Full system access. Can register and import cases, assign employees, link clients, close cases, create user logins and monitor team performance. |
+| Employee | Accesses assigned cases, updates statuses and follow-ups, records third-party responses and payments, reviews documents and uses AI assistance. |
+| Client | Views their own recovery cases, tracks progress and financial details, checks missing documents, uploads documents and asks questions about their claims. |
 
-RAG-Based Question Answering: Generate context-aware responses using information retrieved from relevant documents.
+Client-uploaded documents are automatically processed. The system extracts text, generates summaries, identifies important details and performs content checks. The processed information becomes available to Managers and Employees through the case Documents tab and dashboard. The case AI assistant can also use these extracted details when answering staff queries.
 
-Analytics Dashboard: Analyze recovery-related data using Apache Spark.
+## Main Modules
 
-Database Management: Store and manage case, claim, and recovery information.
+1. **Case Registration and Import:** Register cases individually or import them through CSV/XLSX files. Only claims marked `subrogation_potential = Yes` are added.
+2. **Case Status Workflow:** Manage case statuses and maintain a history of status changes.
+3. **Follow-up Management:** Generate rule-based reminders and detect delayed cases, with an AI-generated report to support follow-up activities.
+4. **Document Management:** Maintain document checklists and analyze PDF documents using PyMuPDF and Qwen3.
+5. **Third-Party Tracking:** Record insurer responses for each case and maintain insurer-wise claimed versus recovered amounts.
+6. **AI Case Assistant:** Provide case summaries and question-answering functionality for staff and clients.
+7. **Dashboard and Analytics:** Display recovery amounts, case information and employee-wise performance.
 
-🛠️ Technology Stack
+## Technology Stack
 
-Category
+| Component | Technologies |
+|---|---|
+| Frontend | React.js, Tailwind CSS |
+| Backend | Python, Django, Django REST Framework |
+| Database | SQLite, PostgreSQL |
+| AI Runtime | Ollama |
+| Language Model | Qwen3 1.7B |
+| RAG Framework | Sentence Transformers, ChromaDB |
+| Document Processing | PyMuPDF |
+| Big Data Processing | Apache Spark, PySpark |
+| Data Output | Parquet, JSON |
+| Communication | REST APIs |
 
-Technologies
+## AI and Document Intelligence
 
-Frontend
+### 1. Ollama and Qwen3 1.7B
 
-React.js, Tailwind CSS
+Ollama is used to run the Qwen3 1.7B language model locally. The Django backend communicates with Ollama to send prompts and receive generated responses.
 
-Backend
+The model supports:
+- AI-powered case assistance.
+- Case summaries and contextual responses.
+- Document analysis and extraction of important details.
+- Question answering using retrieved case information.
 
-Python, Django, Django REST Framework
+Running the model locally reduces dependency on paid external LLM APIs.
 
-Database
+### 2. Retrieval-Augmented Generation (RAG)
 
-SQLite, PostgreSQL
+SubroTrack uses RAG to answer questions using information from individual insurance cases rather than relying only on the language model's general knowledge.
 
-AI Runtime
+The RAG pipeline uses Sentence Transformers, ChromaDB and Qwen3 1.7B.
 
-Ollama
+**How it works:**
 
-Language Model
+```text
+User Question
+     |
+     v
+Sentence Transformers
+(Generate Query Embeddings)
+     |
+     v
+ChromaDB
+(Similarity Search)
+     |
+     v
+Retrieve Relevant Passages
+     |
+     v
+Qwen3 1.7B through Ollama
+     |
+     v
+Context-Aware Answer
+with Source References
+```
 
-Qwen3 1.7B
+The system indexes the following information for each case:
+- Extracted document text and AI-generated summaries.
+- Evidence checklist.
+- Case details and important facts.
+- Activity and follow-up history.
+- Third-party insurer updates and payment information.
 
-AI Architecture
+The index is automatically updated when relevant case information changes, such as a new document upload, activity entry or payment.
 
-Retrieval-Augmented Generation (RAG)
+**RAG functionality:**
+- The Evidence Search page allows Managers and Employees to search across cases.
+- Users can mention a case ID, such as `SUB-1003`, to focus their search on a particular case.
+- The Case AI Assistant uses document retrieval by default and displays relevant source references.
+- Users can switch back to standard AI responses when required.
+- If RAG dependencies are unavailable, the assistant falls back to standard responses. The existing client assistant remains available.
 
-Big Data Processing
+### 3. Apache Spark and PySpark Analytics
 
-Apache Spark, PySpark
+Apache Spark is used to process insurance recovery-related data and generate analytical results for the Manager's Data Analytics dashboard.
 
-Communication
+PySpark is used to implement the analytics jobs in Python.
 
-REST APIs
+**Analytics generated:**
+- Employee-wise recovery performance.
+- Monthly recovery trends.
+- Case status analysis.
+- Recovery performance by claim size and insurer.
+- Delayed-case analytics.
 
-🤖 AI & Data Processing
+**Analytics execution workflow:**
 
-1. Ollama & Qwen3 1.7B
+```text
+Manager Opens Data Analytics
+           |
+           v
+      Django Backend
+           |
+           v
+   Analytics Runner
+   (runner.py)
+           |
+           v
+   PySpark Analytics Job
+   (spark_jobs.py)
+           |
+           v
+  Process and Analyze Data
+           |
+           v
+    Parquet + results.json
+           |
+           v
+       Django API
+           |
+           v
+    React Dashboard
+```
 
-Ollama runs the Qwen3 1.7B language model locally.
+**How Spark runs:**
 
-The model provides AI-powered assistance and generates contextual responses through the Django backend.
+- Spark jobs start when a Manager opens the Data Analytics page and analytics need to be generated.
+- Previous results are displayed immediately when available.
+- Analytics are recalculated only when relevant case data changes.
+- The page periodically checks for data changes while it remains open.
+- A Refresh Now option forces a new analytics run, while Stop cancels a running job.
+- Spark results are saved and reused instead of recalculating them on every page request.
 
-2. Retrieval-Augmented Generation (RAG)
+### Spark Data Sources
 
-Extracts and indexes information from insurance-related documents.
+| Database | Processing Method |
+|---|---|
+| SQLite | Django exports database tables into JSON files, which Spark reads for processing. |
+| PostgreSQL / RDS | Spark reads database tables through JDBC. |
 
-Retrieves relevant document content based on user queries.
+The analytics output is stored in:
 
-Passes the retrieved context to Qwen3 1.7B through Ollama to generate document-grounded responses.
+```text
+backend/analytics_data/output/
+```
 
-3. Apache Spark & PySpark
+This directory contains Parquet output folders and `results.json`.
 
-Processes and analyzes insurance recovery-related datasets.
+### Spark Performance and Configuration
 
-Executes analytics workflows to generate meaningful recovery insights.
+- A Spark worker process starts when required and stays active for five minutes of inactivity by default.
+- Subsequent jobs reuse the running worker to reduce startup overhead.
+- Analytics results are cached to avoid unnecessary duplicate calculations.
+- Spark is configured for single-machine processing using `local[*]` by default.
+- `SPARK_WORKER=0` disables the persistent worker and runs one process per job.
+- `SPARK_WRITE_PARQUET=0` disables Parquet output.
+- `SPARK_WORKER_IDLE_MIN` controls the worker's idle timeout.
+- `SPARK_STARTUP_TIMEOUT_S` controls the Spark startup timeout.
+- `SPARK_JOB_TIMEOUT_S` controls the maximum job execution time.
+- `SPARK_MASTER` configures the Spark master.
+- `SPARK_SOURCE` controls the data source (`auto`, `export` or `jdbc`).
 
-Makes analytical results available through Django APIs for dashboard visualization.
+Parquet output uses PyArrow, so Hadoop winutils is not required for the configured Windows setup.
 
-## Roles
-| Role | Theme | Can do |
-|---|---|---|
-| Manager | violet | Everything: import/register cases, assign employees, link clients, close cases, create logins, see team performance |
-| Employee | green | Works only on cases assigned to them: update status and follow-ups, record third-party responses and payments, review documents, use the AI agent |
-| Client | navy | Sees only their own recovery cases: progress, money position, missing documents (can upload them), insurer updates, ask the AI about their claim |
+## Project Structure
 
-Client uploads are analysed automatically (text extraction, summary, key details, content check) and appear for the manager/employee
-on the case's Documents tab and on the dashboard. The case AI assistant uses those extracted details when answering staff questions.
+```text
+SubroTrack/
+│
+├── backend/
+│   ├── analytics/
+│   │   ├── runner.py
+│   │   ├── spark_jobs.py
+│   │   ├── spark_worker.py
+│   │   └── store.py
+│   │
+│   ├── cases/
+│   │   ├── management/
+│   │   ├── migrations/
+│   │   ├── models.py
+│   │   ├── services.py
+│   │   ├── views.py
+│   │   └── urls.py
+│   │
+│   ├── rag/
+│   │   ├── engine.py
+│   │   └── views.py
+│   │
+│   ├── subrotrack/
+│   ├── requirements.txt
+│   ├── requirements-rag.txt
+│   ├── requirements-spark.txt
+│   └── manage.py
+│
+├── frontend/
+│   ├── src/
+│   ├── package.json
+│   ├── package-lock.json
+│   └── vite.config.js
+│
+├── sample_accident_report.txt
+├── sample_claims_mixed.csv
+├── sample_import.csv
+├── README.md
+└── .gitignore
+```
 
-## Main modules
-1. Case registration and CSV/XLSX import (only claims flagged `subrogation_potential = Yes` are added)
-2. Status workflow with history
-3. Follow-up reminders and delayed-case detection (rule based) with an AI agent report on top
-4. Document checklist with PDF analysis (PyMuPDF + Qwen3)
-5. Third-party tracking: every insurer response per case, plus an insurer-wise page of claimed vs recovered amounts
-6. AI case summary and Q&A (staff and client versions)
-7. Dashboard with recovery amounts and employee-wise performance
+## Installation and Setup
 
-## Setup
-Ollama:
+### Prerequisites
 
-    ollama pull qwen3:1.7b
-    ollama serve
+Install the following before running the project:
 
-Backend (first time, or after upgrading: delete backend/db.sqlite3 and backend/cases/migrations):
+- Python and pip.
+- Node.js and npm.
+- Git.
+- Ollama.
+- Java Development Kit (JDK 17) for Spark analytics.
+- PostgreSQL (only if using PostgreSQL instead of SQLite).
 
-    cd backend
-    python -m venv venv
-    venv\Scripts\activate            # Mac/Linux: source venv/bin/activate
-    pip install -r requirements.txt
-    pip install -r requirements-spark.txt
-    pip install -r requirements-rag.txt
-    python manage.py makemigrations cases
-    python manage.py migrate
-    python manage.py seed
-    python manage.py runserver
+### 1. Clone the Repository
 
-Frontend:
+```bash
+git clone https://github.com/Sanikarode123/SubroTrack_Project.git
 
-    cd frontend
-    npm install
-    npm run dev
+cd SubroTrack_Project
+```
 
-Open http://localhost:5173 and pick the tab for your role.
+### 2. Install and Start Ollama
+
+Install Ollama from https://ollama.com/download.
+
+Pull the Qwen3 model:
+
+```bash
+ollama pull qwen3:1.7b
+```
+
+Start the Ollama service if it is not already running:
+
+```bash
+ollama serve
+```
+
+Ollama normally runs locally at:
+
+```text
+http://localhost:11434
+```
+
+### 3. Backend Setup
+
+Open a terminal in the project root:
+
+```bash
+cd backend
+```
+
+Create a Python virtual environment:
+
+```bash
+python -m venv venv
+```
+
+Activate the environment on Windows:
+
+```powershell
+venv\Scripts\activate
+```
+
+For Mac/Linux:
+
+```bash
+source venv/bin/activate
+```
+
+Install the core backend dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Install RAG dependencies:
+
+```bash
+pip install -r requirements-rag.txt
+```
+
+Install Spark dependencies:
+
+```bash
+pip install -r requirements-spark.txt
+```
+
+Run database migrations:
+
+```bash
+python manage.py migrate
+```
+
+Load sample data:
+
+```bash
+python manage.py seed
+```
+
+Start the Django development server:
+
+```bash
+python manage.py runserver
+```
+
+The backend will be available at:
+
+```text
+http://127.0.0.1:8000/
+```
+
+**Note:** The project already contains migration files. Do not delete the migrations folder when performing a normal installation or upgrade. Deleting the local database is only appropriate when intentionally resetting local development data.
+
+### 4. Frontend Setup
+
+Open another terminal in the project root:
+
+```bash
+cd frontend
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the frontend:
+
+```bash
+npm run dev
+```
+
+The frontend will be available at:
+
+```text
+http://localhost:5173
+```
+
+Open the URL in your browser and select the appropriate role.
+
+### 5. Spark Configuration
+
+Spark analytics requires JDK 17.
+
+Verify the Java installation:
+
+```bash
+java -version
+```
+
+Make sure `JAVA_HOME` points to your JDK 17 installation.
+
+To check Spark compatibility and run a small test:
+
+```bash
+cd backend
+
+python manage.py check_spark
+```
+
+Optionally, load historical sample cases:
+
+```bash
+python manage.py seed_history
+```
+
+Run analytics manually:
+
+```bash
+python manage.py run_spark_analytics
+```
+
+Normally, Spark analytics starts automatically when a Manager opens the Data Analytics page and a recalculation is required.
+
+For PostgreSQL mode, configure the PostgreSQL JDBC driver using `SPARK_JDBC_JAR` if necessary. The driver can otherwise be downloaded automatically.
+
+### 6. RAG Configuration
+
+Install the RAG dependencies from the backend directory:
+
+```bash
+pip install -r requirements-rag.txt
+```
+
+Optionally, build the complete document index in advance:
+
+```bash
+python manage.py rag_index
+```
+
+On the first run, Sentence Transformers downloads the embedding model (approximately 90 MB). For offline environments, configure `RAG_EMBED_MODEL` with a local model folder.
+
+The RAG index is stored in:
+
+```text
+backend/rag_store/
+```
+
+Additional configuration:
+
+- `RAG_EMBED_MODEL`: Embedding model name or local model directory.
+- `RAG_TOP_K`: Number of relevant passages retrieved per query (default: 6).
+
+## Configuration
+
+The application supports environment variables for application settings, AI integration and database configuration.
+
+| Variable | Purpose |
+|---|---|
+| `SECRET_KEY` | Django secret key |
+| `DEBUG` | Django debug mode |
+| `ALLOWED_HOSTS` | Allowed application hosts |
+| `DELAY_THRESHOLD_DAYS` | Number of days used for delayed-case detection (default: 14) |
+| `OLLAMA_URL` | Ollama service URL |
+| `OLLAMA_MODEL` | Language model name (default: `qwen3:1.7b`) |
+| `DB_NAME` | PostgreSQL database name |
+| `DB_USER` | PostgreSQL username |
+| `DB_PASSWORD` | PostgreSQL password |
+| `DB_HOST` | PostgreSQL host |
+| `RAG_EMBED_MODEL` | RAG embedding model |
+| `RAG_TOP_K` | Number of retrieved passages |
+| `SPARK_MASTER` | Spark master configuration |
+| `SPARK_SOURCE` | Spark data source selection |
+| `SPARK_JDBC_JAR` | PostgreSQL JDBC driver path |
+
+For PostgreSQL support, install:
+
+```bash
+pip install psycopg2-binary
+```
+
+Use your own environment-specific values. Never commit real passwords, API keys or production secrets to GitHub.
 
 ## Demo Login Credentials
 
-> **For local development and demonstration only.**
-> These are sample accounts created by the database seed command.
-> Do not use these credentials in production.
+The following accounts are created by the database seed command for local development and demonstration.
+
+**For local development and demonstration only. Do not use these credentials in production.**
 
 | Username | Demo Password | Role |
 |---|---|---|
@@ -138,72 +484,45 @@ Open http://localhost:5173 and pick the tab for your role.
 | priya, amit | pass1234 | Employee |
 | rahul, sneha, vikram | pass1234 | Client |
 
-## Configuration (environment variables)
-DELAY_THRESHOLD_DAYS (14), OLLAMA_URL, OLLAMA_MODEL (qwen3:1.7b), SECRET_KEY, DEBUG, ALLOWED_HOSTS,
-DB_NAME / DB_USER / DB_PASSWORD / DB_HOST for PostgreSQL (also `pip install psycopg2-binary`).
+## Troubleshooting
 
+**Ollama is not responding**
 
+- Check whether Ollama is installed and running.
+- Run `ollama list` to verify that `qwen3:1.7b` is available.
+- Check the configured `OLLAMA_URL`.
 
-## Data Analytics (Apache Spark)
-Managers get a **Data Analytics** page. Opening the page starts the PySpark job in the background when needed; the page polls its status and then
-shows charts and tables. Page views only read saved results, so no Spark session is started per request.
+**RAG is not working**
 
-Jobs: employee-wise recovery, monthly recovery trend, case status analysis, recovery performance (by claim size and insurer), delayed-case analytics.
+- Verify that the RAG dependencies are installed.
+- Run `python manage.py rag_index` to build the index.
+- Check that the embedding model is available.
+- Verify the `backend/rag_store/` directory.
 
-    Run analytics -> Django (analytics/runner.py) -> PySpark job (analytics/spark_jobs.py) -> Parquet + results.json -> Django API -> React
+**Spark fails to start**
 
-Setup:
+- Verify that JDK 17 is installed.
+- Check `JAVA_HOME` and `java -version`.
+- Run `python manage.py check_spark` to identify compatibility issues.
+- For PostgreSQL, verify the JDBC driver configuration.
+- Check Spark startup and job timeout settings.
 
-    # JDK 17 must be installed and JAVA_HOME set (java -version). Newer Java (23+) does not work with Spark.
-    cd backend
-    pip install -r requirements-spark.txt
-    python manage.py seed_history          # optional: ~150 historical cases so there is 12 months of data
-    python manage.py run_spark_analytics   # optional: run the job manually instead of from the page
+**Analytics are not updating**
 
-Data source:
-- SQLite (local): Django exports the tables to JSON files and Spark reads them.
-- PostgreSQL / RDS (when DB_NAME is set): Spark reads the tables over JDBC. The PostgreSQL JDBC driver is downloaded automatically,
-  or set SPARK_JDBC_JAR to a local driver file when the server has no internet access.
-- Output is written to `backend/analytics_data/output/` (Parquet folders plus results.json).
-- Other settings: SPARK_MASTER (default local[*]), SPARK_SOURCE (auto, export or jdbc).
-- On Windows, writing Parquet needs Hadoop winutils; if it is missing the charts still work and the page notes that Parquet was not saved.
-  Running on Linux, WSL or EC2 avoids this.
+- Check whether case data has changed.
+- Use Refresh Now on the Data Analytics page.
+- Check the Spark worker and analytics job status.
 
-## Spark speed
-The first run starts a Spark worker process (20-60 s for the JVM). The worker then stays warm for 5 minutes of inactivity (SPARK_WORKER_IDLE_MIN), so later runs
-only do the calculations. Each result is also cached so it is computed once instead of twice, and Spark is configured for single-machine use
-(few partitions, no web UI, loopback address). Set SPARK_WORKER=0 to run one process per job, SPARK_WRITE_PARQUET=0 to skip Parquet output.
+## Future Enhancements
 
-## RAG: evidence search (Sentence Transformers + ChromaDB + Qwen3)
-Staff questions are answered from the case's own documents and records instead of a fixed prompt.
+- Improved recovery prediction and prioritization.
+- Advanced AI-powered document analysis.
+- Additional recovery performance metrics.
+- Automated workflow optimization.
+- Enhanced reporting and analytics.
 
-    question -> embed (Sentence Transformers) -> ChromaDB similarity search -> top passages -> Qwen3 answers with [1][2] references
+## Author
 
-Indexed per case: document text and AI summaries, the evidence checklist, case facts, activity log, third-party insurer updates and payments.
-A case is re-indexed automatically when something about it changes (new upload, activity, payment).
+**Sanika Rode**
 
-    cd backend
-    pip install -r requirements-rag.txt
-    python manage.py rag_index        # optional: build the whole index up front (first run downloads the embedding model, ~90 MB)
-
-- **Evidence search** page (manager and employee): ask across cases; mention an ID like SUB-1003 to focus on one case.
-- Case **AI assistant** tab: answers use retrieval by default (checkbox to switch back) and list their sources.
-- If the RAG packages are not installed, the assistant falls back to the standard answer. Clients keep the existing client assistant.
-- Settings: RAG_EMBED_MODEL (model name or local folder, for offline servers), RAG_TOP_K (default 6). The index lives in `backend/rag_store/`.
-
-## When Spark runs (Data Analytics)
-- Spark runs **only when a manager opens the Data Analytics page**. Nothing runs in the background otherwise, and the warm worker shuts itself down after 5 idle minutes.
-- On opening, the previous results show immediately. Spark re-runs only if the case data changed since the last run (status, assignment, amounts,
-  third party, payments or activity); otherwise it does nothing.
-- While the page stays open it checks for data changes every few seconds, so editing or reassigning a case elsewhere refreshes the analytics automatically.
-- **Refresh now** forces a re-run and **Stop** cancels a running job. A job that dies or runs longer than 10 minutes (SPARK_JOB_TIMEOUT_S) is marked failed
-  with the reason instead of staying on "running".
-
-## Spark: speed and troubleshooting
-- Use **JDK 17**. Java 23+ breaks Spark, and PySpark 4.x needs Java 17+. The page checks Java, PySpark and Python versions first and tells you what to fix.
-- `python manage.py check_spark` prints the versions and runs a tiny Spark job with timings. Run it first if the page reports a failure.
-- Start-up of the Spark engine is the slow part (about 10-30 s, once). It then stays warm for 5 idle minutes, so repeat runs take a few seconds.
-  The Spark settings are tuned for small data (2 partitions, no web UI, no code generation or adaptive planning, ANSI mode off, loopback address, light JVM flags).
-- Parquet is written with pyarrow, so no Hadoop/winutils is needed on Windows. Set SPARK_WRITE_PARQUET=0 to skip it.
-- If Spark does not start within 150 s (SPARK_STARTUP_TIMEOUT_S) or a job exceeds 10 min (SPARK_JOB_TIMEOUT_S), it is stopped and the reason is shown.
-- PostgreSQL mode: set SPARK_JDBC_JAR to a downloaded postgresql driver `.jar` so Spark does not need internet access at start-up.
+GitHub: https://github.com/Sanikarode123
