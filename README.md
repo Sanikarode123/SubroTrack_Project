@@ -1,4 +1,4 @@
-# SubroTrack – AI-Driven Insurance Subrogation Management System
+# SubroTrack – AI-Driven Subrogated Claims Analytics and Management Platform.
 
 ## Overview
 
