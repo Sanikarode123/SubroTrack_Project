@@ -53,6 +53,27 @@ Client-uploaded documents are automatically processed. The system extracts text,
 | Data Output | Parquet, JSON |
 | Communication | REST APIs |
 
+**Application Screenshots:**
+**Dashboard**
+<img width="1872" height="850" alt="image" src="https://github.com/user-attachments/assets/28a93c48-0248-4a35-92a7-8a43d615938d" />
+
+**Case Management**
+<img width="1865" height="847" alt="image" src="https://github.com/user-attachments/assets/e4b9e086-4d13-4d41-82ac-b168c3eed042" />
+
+<img width="1888" height="833" alt="image" src="https://github.com/user-attachments/assets/55142863-dcd8-4bfe-8e59-5f7c8ab28328" />
+**AI Assistant**
+<img width="1833" height="830" alt="image" src="https://github.com/user-attachments/assets/c80fde90-849e-4c04-b674-ddd202bd91f1" />
+**RAG Evidence Search**
+<img width="1893" height="832" alt="image" src="https://github.com/user-attachments/assets/ac530436-df92-45b2-b464-de205ddcd547" />
+
+**Data Evidence**
+<img width="1906" height="828" alt="image" src="https://github.com/user-attachments/assets/c011830c-c900-4a65-9c5e-e0d1f7861841" />
+**People management(only manager can do)**
+<img width="1897" height="850" alt="image" src="https://github.com/user-attachments/assets/6453d51f-2bab-4075-ad15-af2bebca11c4" />
+
+
+
+
 ## AI and Document Intelligence
 
 ### 1. Ollama and Qwen3 1.7B
